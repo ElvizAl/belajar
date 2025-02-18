@@ -2,13 +2,17 @@
   "name": "backend",
   "version": "1.0.50",
   "scripts": {
+    "format": "bun x biome format src/**/*.ts",
+    "lint": "bun x biome lint src/**/*.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "elysia": "latest"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "bun-types": "latest"
   },
   "module": "src/index.js"
