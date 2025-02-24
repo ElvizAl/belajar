@@ -7,7 +7,6 @@ import { NoteRepository } from "../../infrastructure/db/noteRepo";
 import { AuthServices } from "./authServices";
 import { NoteServices } from "./noteServices";
 
-
 const container = new Container();
 
 container.bind(TYPES.prisma).toConstantValue(new PrismaClient());

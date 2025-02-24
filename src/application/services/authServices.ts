@@ -1,74 +1,78 @@
 import type { SessionRepository } from "../../infrastructure/db/sessionRepo";
 import type { UserRepository } from "../../infrastructure/db/userRepo";
-import "reflect-metadata"
+import "reflect-metadata";
 import { injectable, inject } from "inversify";
 import { TYPES } from "../../infrastructure/entity/types";
 import { UserDTO } from "../dtos/userDTO";
 
 @injectable()
-
 export class AuthServices {
-    private userRepo: UserRepository;
-    private sessionRepo: SessionRepository;
+	private userRepo: UserRepository;
+	private sessionRepo: SessionRepository;
 
-    constructor(@inject(TYPES.userRepo) userRepo: UserRepository, @inject(TYPES.sessionRepo) sessionRepo: SessionRepository) {
-        this.userRepo = userRepo;
-        this.sessionRepo = sessionRepo;
-    }
+	constructor(
+		@inject(TYPES.userRepo) userRepo: UserRepository,
+		@inject(TYPES.sessionRepo) sessionRepo: SessionRepository,
+	) {
+		this.userRepo = userRepo;
+		this.sessionRepo = sessionRepo;
+	}
 
-    async registerUser(name: string, email: string, password: string) {
-        const user = await this.userRepo.getOne(email);
+	async registerUser(name: string, email: string, password: string) {
+		const user = await this.userRepo.getOne(email);
 
-        if (user) {
-            throw new Error("user sudah terdaftar")
-        }
+		if (user) {
+			throw new Error("user sudah terdaftar");
+		}
 
-        const hashPassword = await Bun.password.hash(password)
-        const newUser = await this.userRepo.create({
-            name, email, password: hashPassword, avatar: "",
-        });
+		const hashPassword = await Bun.password.hash(password);
+		const newUser = await this.userRepo.create({
+			name,
+			email,
+			password: hashPassword,
+			avatar: "",
+		});
 
-        return new UserDTO(newUser).fromEntity();
-    }
+		return new UserDTO(newUser).fromEntity();
+	}
 
-    async loginUser(email:string, password: string) {
-        const user = await this.userRepo.getOne(email);
+	async loginUser(email: string, password: string) {
+		const user = await this.userRepo.getOne(email);
 
-        if (!user) {
-            throw new Error("pengguna tidak ditemukan")
-        }
+		if (!user) {
+			throw new Error("pengguna tidak ditemukan");
+		}
 
-        const matchedPassword = Bun.password.verify(password, user.password);
+		const matchedPassword = Bun.password.verify(password, user.password);
 
-        if (!matchedPassword) {
-            throw new Error("Password Salah")
-        }
+		if (!matchedPassword) {
+			throw new Error("Password Salah");
+		}
 
-        const session = await this.sessionRepo.create(user.id);
+		const session = await this.sessionRepo.create(user.id);
 
-        return session
-    }
+		return session;
+	}
 
-    async checkSession(sessionId: string) {
-        const session = await this.sessionRepo.getOne(sessionId)
+	async checkSession(sessionId: string) {
+		const session = await this.sessionRepo.getOne(sessionId);
 
-        if (!session) {
-            throw new Error("Session Salah")
-        }
+		if (!session) {
+			throw new Error("Session Salah");
+		}
 
-        return "valid"
-    }
- 
-    async decodeSession(sessionId: string) {
-        const session = await this.sessionRepo.getOne(sessionId)
+		return "valid";
+	}
 
-        if (!session) {
-            throw new Error("Session Salah")
-        }
+	async decodeSession(sessionId: string) {
+		const session = await this.sessionRepo.getOne(sessionId);
 
-        const user = await this.userRepo.getOne(session.userId)
+		if (!session) {
+			throw new Error("Session Salah");
+		}
 
-        return { user }
-    }
+		const user = await this.userRepo.getOne(session.userId);
+
+		return { user };
+	}
 }
-
