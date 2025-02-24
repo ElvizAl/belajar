@@ -1,0 +1,26 @@
+### register
+POST http://localhost:8000/api/v1/register
+Content-Type: application/json
+
+{
+    "name": "skylo",
+    "email": "elvizaka88@gmail.com",
+    "password": "12345678"
+}
+
+### login
+POST http://localhost:8000/api/v1/login
+Content-Type: application/json
+
+{
+    "email": "elvizaka88@gmail.com",
+    "password": "12345678"
+}
+
+### checkSession
+POST http://localhost:8000/api/v1/session
+Content-Type: application/json
+
+{
+    "sessionId": "cm7hr0q8z0000ui449qcycw6y1"
+}
